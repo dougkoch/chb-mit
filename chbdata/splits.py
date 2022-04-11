@@ -1,5 +1,5 @@
 import numpy as np
-from patient import Patient
+from .patient import Patient
 import random
 
 # Generates splits within one patient (defaults to 80%/10%/10% train/val/test)
