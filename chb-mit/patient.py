@@ -1,8 +1,8 @@
 import glob
 import numpy as np
 
-from chb_edf_file import ChbEdfFile
-from chb_label_wrapper import ChbLabelWrapper
+from .chb_edf_file import ChbEdfFile
+from .chb_label_wrapper import ChbLabelWrapper
 
 class Patient:
     def __init__(self, id):
