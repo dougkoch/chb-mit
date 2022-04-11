@@ -9,7 +9,7 @@ setup(
    author='Doug Koch, Misha Klopukh',
    author_email='misha@mpcrlab.com',
    packages=['chbdata'],
-   url='https://github.com/dougkoch/chb-mit',
+   url='https://github.com/mishaklopukh/chb-mit',
    license='LICENSE.txt',
    description='CHB-MIT scalp EEG dataset helpers',
    long_description=fread('README.md'),
