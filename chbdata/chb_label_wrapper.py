@@ -1,7 +1,3 @@
-from abc import abstractmethod, ABCMeta
-from collections import OrderedDict
-import datetime
-import numpy as np
 import re
 
 class ChbLabelWrapper:
@@ -66,7 +62,7 @@ class ChbLabelWrapper:
 
         return output_channel_list
 
-    def _parse_metadata(self, metadata_block, output_metadata):
+    def _parse_metadata(self, metadata_block):
         """
         Parse a single seizure metadata block
         \TODO Replace individual file metadata with a named structure
@@ -95,7 +91,7 @@ class ChbLabelWrapper:
                 seizure_end = int(pattern_seizure_end.search(metadata_block[4 + i * 2 + 1]).group(1))
                 seizure_intervals.append((seizure_start, seizure_end))
             file_metadata['seizure_intervals'] = seizure_intervals
-            output_metadata[filename] = file_metadata
+            return filename, file_metadata
         else:
             import warnings
             warnings.warn("Block didn't follow the pattern for a metadata file block", Warning)
@@ -103,9 +99,8 @@ class ChbLabelWrapper:
             try:
                 self._channel_names = self._parse_channel_names("\n".join(metadata_block))
             except Exception as e:
-                print 'Failed to parse block as a channel names block'
+                print('Failed to parse block as a channel names block')
                 raise e
-        return output_metadata
 
     def _parse_file_metadata(self, seizure_file_blocks):
         """
@@ -114,12 +109,12 @@ class ChbLabelWrapper:
         Note: These are not necessarily in file order, so always check against the filename before continuing.
         :param seizure_file_blocks: List of seizure file blocks
         """
-        output_metadata = OrderedDict()
+        metadata = []
         for block in seizure_file_blocks:
             lines = block.split('\n')
-            output_metadata = self._parse_metadata(lines, output_metadata)
+            metadata.append(self._parse_metadata(lines))
 
-        return output_metadata
+        return dict(sorted(metadata,key=lambda x: x[0]))
 
     def get_sampling_rate(self):
         """
@@ -137,10 +132,15 @@ class ChbLabelWrapper:
         """
         Get list of seizure intervals for each file
         """
-        return [metadata['seizure_intervals'] for filename, metadata in self._metadata_store.iteritems()]
+        return [metadata['seizure_intervals'] for metadata in self._metadata_store.values()]
 
     def get_file_metadata(self):
         """
         Get the metadata for all of the files
         """
         return self._metadata_store
+    
+    sampling_rate = property(get_sampling_rate)
+    channel_names = property(get_channel_names)
+    seizure_list = property(get_seizure_list)
+    file_metadata = property(get_file_metadata)
