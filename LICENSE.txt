@@ -1,2 +1,3 @@
-Unknown
+2017, Doug Koch: Unknown?
+2022, Misha: MIT License
 https://github.com/dougkoch/chb-mit
